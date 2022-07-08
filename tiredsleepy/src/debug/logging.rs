@@ -90,7 +90,7 @@ macro_rules! trace {
                                       file!(),
                                       line!(),
                                       $crate::LogLevel::Trace,
-                                      format!($($arg),+)));
+                                      format!($($arg)+)));
     }};
 }
 
@@ -109,7 +109,7 @@ macro_rules! debug {
                                       file!(),
                                       line!(),
                                       $crate::LogLevel::Debug,
-                                      format!($($arg),+)));
+                                      format!($($arg)+)));
     }};
 }
 
@@ -128,7 +128,7 @@ macro_rules! info {
                                       file!(),
                                       line!(),
                                       $crate::LogLevel::Info,
-                                      format!($($arg),+)));
+                                      format!($($arg)+)));
     }};
 }
 
@@ -147,7 +147,7 @@ macro_rules! warn {
                                       file!(),
                                       line!(),
                                       $crate::LogLevel::Warn,
-                                      format!($($arg),+)));
+                                      format!($($arg)+)));
     }};
 }
 
@@ -166,7 +166,7 @@ macro_rules! error {
                                       file!(),
                                       line!(),
                                       $crate::LogLevel::Error,
-                                      format!($($arg),+)));
+                                      format!($($arg)+)));
     }};
 }
 
@@ -186,7 +186,7 @@ macro_rules! fatal {
                                       file!(),
                                       line!(),
                                       $crate::LogLevel::Fatal,
-                                      format!($($arg),+)));
+                                      format!($($arg)+)));
         panic!();
     }};
 }
