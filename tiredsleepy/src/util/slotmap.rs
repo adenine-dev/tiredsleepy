@@ -230,7 +230,7 @@ mod test {
         use super::*;
 
         struct Dropped {
-            x: u32,
+            _x: u32,
         }
 
         static mut DROP_COUNT: u32 = 0;
@@ -247,9 +247,9 @@ mod test {
         fn slotmap_handles_drops() {
             {
                 let mut sm = Slotmap::<Dropped>::new();
-                let k1 = sm.insert(Dropped { x: 3 });
-                sm.insert(Dropped { x: 3 });
-                sm.insert(Dropped { x: 3 });
+                let k1 = sm.insert(Dropped { _x: 3 });
+                sm.insert(Dropped { _x: 3 });
+                sm.insert(Dropped { _x: 3 });
 
                 assert_eq!(unsafe { DROP_COUNT }, 0);
 
