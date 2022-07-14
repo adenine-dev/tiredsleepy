@@ -5,3 +5,5 @@ members = [
     "tiredsleepy",
     "run-wasm"
 ]
+
+default-members = ["sandbox"]

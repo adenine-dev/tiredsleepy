@@ -1,5 +1,10 @@
+#[cfg(target_arch = "wasm32")]
 extern crate js_sys;
+
+#[cfg(target_arch = "wasm32")]
 extern crate wasm_bindgen;
+
+#[cfg(target_arch = "wasm32")]
 extern crate web_sys;
 
 extern crate winit;
@@ -10,36 +15,24 @@ use winit::{
     window::WindowBuilder,
 };
 
-// #[cfg(target_arch = "wasm32")]
-use wasm_bindgen::{prelude::*, JsValue};
-
-// #[cfg(target_arch = "wasm32")]
-use web_sys::{console, Window};
-
-use crate::*;
-
 pub fn start() {
-    use winit::platform::web::WindowExtWebSys;
-
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new().build(&event_loop).unwrap();
-    let canvas = window.canvas();
 
-    let web_win = web_sys::window().unwrap();
-    let document = web_win.document().unwrap();
-    let body = document.body().unwrap();
+    #[cfg(target_arch = "wasm32")]
+    {
+        use winit::platform::web::WindowExtWebSys;
 
-    canvas.style().set_css_text("background-color: lavender;");
-    canvas.set_width(720);
-    canvas.set_height(480);
-    body.append_child(&canvas).unwrap();
+        let canvas = window.canvas();
 
-    trace!("trace");
-    debug!("debug");
-    info!("info");
-    warn!("warn");
-    error!("error");
-    trace!("trace");
+        let web_win = web_sys::window().unwrap();
+        let document = web_win.document().unwrap();
+        let body = document.body().unwrap();
+
+        canvas.set_width(720);
+        canvas.set_height(480);
+        body.append_child(&canvas).unwrap();
+    }
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
@@ -58,9 +51,10 @@ pub fn start() {
     });
 }
 
-// #[cfg(target_arch = "wasm32")]
+#[cfg(target_arch = "wasm32")]
 pub mod wasm {
     use super::*;
+    use wasm_bindgen::prelude::*;
 
     #[wasm_bindgen(start)]
     pub fn run() {

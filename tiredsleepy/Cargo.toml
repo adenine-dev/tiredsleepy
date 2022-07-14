@@ -10,7 +10,7 @@ colored = "2.0.0"
 bitfield = "0.13.2"
 winit = "0.26.1"
 
-[dependencies.web_sys]
+[target.'cfg(target_arch = "wasm32")'.dependencies.web_sys]
 package = "web-sys"
 version = "0.3.58"
 features = [
@@ -36,7 +36,7 @@ features = [
     'WheelEvent'
 ]
 
-[dependencies.wasm-bindgen]
+[target.'cfg(target_arch = "wasm32")'.dependencies.wasm-bindgen]
 version = "0.2.45"
 
 [dependencies.js-sys]
