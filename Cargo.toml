@@ -3,4 +3,5 @@
 members = [
     "sandbox",
     "tiredsleepy",
+    "run-wasm"
 ]

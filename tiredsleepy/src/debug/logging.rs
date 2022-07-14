@@ -6,7 +6,7 @@ use std::{
 extern crate colored;
 use colored::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum LogLevel {
     Trace = 0,
     Debug = 1,
@@ -36,10 +36,34 @@ pub fn set_log_level(level: LogLevel) {
     CURRENT_LOG_LEVEL.store(level as u8, Ordering::SeqCst);
 }
 
+#[cfg(target_arch = "wasm32")]
+mod wasm {
+    use wasm_bindgen::JsValue;
+    use web_sys::console;
+
+    use super::*;
+
+    pub fn log(level: LogLevel, string: &str) {
+        let log_fn = match level {
+            LogLevel::Trace => console::debug_1, // debug turned off by default in most browsers
+            LogLevel::Debug => console::log_1,
+            LogLevel::Info => console::info_1,
+            LogLevel::Warn => console::warn_1,
+            LogLevel::Error => console::error_1,
+            LogLevel::Fatal => console::error_1,
+        };
+        log_fn(&JsValue::from_str(string));
+    }
+}
+
 /// Please don't use this directly ;; instead use one of the logging macros such as `trace!` or `warn!`.
 #[doc(hidden)]
 pub fn _internal_log(level: LogLevel, string: std::string::String) {
     if level as u8 >= CURRENT_LOG_LEVEL.load(Ordering::Relaxed) {
+        #[cfg(target_arch = "wasm32")]
+        wasm::log(level, string.as_str());
+
+        #[cfg(not(target_arch = "wasm32"))]
         println!("{}", string);
     }
 }

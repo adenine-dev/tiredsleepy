@@ -1,3 +1,7 @@
+extern crate js_sys;
+extern crate wasm_bindgen;
+extern crate web_sys;
+
 extern crate winit;
 
 use winit::{
@@ -6,75 +10,61 @@ use winit::{
     window::WindowBuilder,
 };
 
+// #[cfg(target_arch = "wasm32")]
+use wasm_bindgen::{prelude::*, JsValue};
+
+// #[cfg(target_arch = "wasm32")]
+use web_sys::{console, Window};
+
+use crate::*;
+
 pub fn start() {
+    use winit::platform::web::WindowExtWebSys;
+
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new().build(&event_loop).unwrap();
+    let canvas = window.canvas();
 
-    #[cfg(target_arch = "wasm32")]
-    let log_list = wasm::create_log_list(&window);
+    let web_win = web_sys::window().unwrap();
+    let document = web_win.document().unwrap();
+    let body = document.body().unwrap();
+
+    canvas.style().set_css_text("background-color: lavender;");
+    canvas.set_width(720);
+    canvas.set_height(480);
+    body.append_child(&canvas).unwrap();
+
+    trace!("trace");
+    debug!("debug");
+    info!("info");
+    warn!("warn");
+    error!("error");
+    trace!("trace");
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
+        // debug!("{event:?}");
 
         match event {
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
                 window_id,
             } if window_id == window.id() => *control_flow = ControlFlow::Exit,
+            Event::MainEventsCleared => {
+                window.request_redraw();
+            }
             _ => (),
         }
     });
 }
 
-#[cfg(target_arch = "wasm32")]
+// #[cfg(target_arch = "wasm32")]
 pub mod wasm {
-    use wasm_bindgen::prelude::*;
-    use winit::{event::Event, window::Window};
+    use super::*;
 
     #[wasm_bindgen(start)]
     pub fn run() {
-        console_log::init_with_level(log::Level::Debug).expect("error initializing logger");
-
         #[allow(clippy::main_recursion)]
-        super::main();
-    }
-
-    pub fn create_log_list(window: &Window) -> web_sys::Element {
-        use winit::platform::web::WindowExtWebSys;
-
-        let canvas = window.canvas();
-
-        let window = web_sys::window().unwrap();
-        let document = window.document().unwrap();
-        let body = document.body().unwrap();
-
-        // Set a background color for the canvas to make it easier to tell the where the canvas is for debugging purposes.
-        canvas.style().set_css_text("background-color: crimson;");
-        body.append_child(&canvas).unwrap();
-
-        let log_header = document.create_element("h2").unwrap();
-        log_header.set_text_content(Some("Event Log"));
-        body.append_child(&log_header).unwrap();
-
-        let log_list = document.create_element("ul").unwrap();
-        body.append_child(&log_list).unwrap();
-        log_list
-    }
-
-    pub fn log_event(log_list: &web_sys::Element, event: &Event<()>) {
-        log::debug!("{:?}", event);
-
-        // Getting access to browser logs requires a lot of setup on mobile devices.
-        // So we implement this basic logging system into the page to give developers an easy alternative.
-        // As a bonus its also kind of handy on desktop.
-        if let Event::WindowEvent { event, .. } = &event {
-            let window = web_sys::window().unwrap();
-            let document = window.document().unwrap();
-            let log = document.create_element("li").unwrap();
-            log.set_text_content(Some(&format!("{:?}", event)));
-            log_list
-                .insert_before(&log, log_list.first_child().as_ref())
-                .unwrap();
-        }
+        super::start();
     }
 }

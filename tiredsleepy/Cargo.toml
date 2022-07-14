@@ -6,6 +6,38 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-colored = "2"
+colored = "2.0.0"
 bitfield = "0.13.2"
 winit = "0.26.1"
+
+[dependencies.web_sys]
+package = "web-sys"
+version = "0.3.58"
+features = [
+    'console',
+    "AddEventListenerOptions",
+    'CssStyleDeclaration',
+    'BeforeUnloadEvent',
+    'Document',
+    'DomRect',
+    'Element',
+    'Event',
+    'EventTarget',
+    'FocusEvent',
+    'HtmlCanvasElement',
+    'HtmlElement',
+    'KeyboardEvent',
+    'MediaQueryList',
+    'MediaQueryListEvent',
+    'MouseEvent',
+    'Node',
+    'PointerEvent',
+    'Window',
+    'WheelEvent'
+]
+
+[dependencies.wasm-bindgen]
+version = "0.2.45"
+
+[dependencies.js-sys]
+version = "0.3.58"
